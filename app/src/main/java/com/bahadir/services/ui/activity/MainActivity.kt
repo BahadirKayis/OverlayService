@@ -1,22 +1,15 @@
 package com.bahadir.services.ui.activity
 
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
-import android.view.accessibility.AccessibilityManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bahadir.services.R
 import com.bahadir.services.common.collectIn
 import com.bahadir.services.common.viewBinding
 import com.bahadir.services.databinding.ActivityMainBinding
-import com.bahadir.services.receiver.MyReceiver
-import com.bahadir.services.service.MyAccessibilityService
-import com.bahadir.services.service.MyOverlayService
+import com.bahadir.services.service.OverlayService
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,45 +20,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
+        initUIEffect()
         initUIEvent()
         initUIState()
-        initUIEffect()
-
-        test()
-
-        registerReceiver(MyReceiver(), IntentFilter(Intent.ACTION_BOOT_COMPLETED))
-
-//        val crashButton = Button(this)
-//        crashButton.text = "Test Crash"
-//        crashButton.setOnClickListener {
-//            throw RuntimeException("Test Crash") // Force a crash
-//        }
-//
-//        addContentView(crashButton, ViewGroup.LayoutParams(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT))
-
     }
 
     private fun initUIEvent() {
         binding.btnServiceControl.setOnClickListener {
-            val svc = Intent(this, MyOverlayService::class.java)
             when (serviceStatus) {
                 true -> {
-                    stopService(svc)
+                    binding.btnServiceControl.setText(R.string.stop_service)
                 }
                 false -> {
-//                    val accessibilityServiceIntent = Intent(this, MyAccessibilityService::class.java)
-//                    startService(accessibilityServiceIntent)
-//                    startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-                    startService(svc)
-
+                    binding.btnServiceControl.setText(R.string.start_service)
                 }
             }
             viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
         }
-
     }
 
     private fun initUIState() = viewModel.state.collectIn(this) { state ->
@@ -79,27 +50,34 @@ class MainActivity : AppCompatActivity() {
             }
             else -> {}
         }
-
     }
 
-    private fun initUIEffect() = viewModel.effect.collectIn(this) {
+    private fun initUIEffect() = viewModel.effect.collectIn(this) { effect ->
+        val svc = Intent(this, OverlayService::class.java)
+        when (effect) {
+            is ActivityUIEffect.ActionDrawOtherApp -> {
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                startActivity(intent)
+            }
+            is ActivityUIEffect.ActionAccessibilityService -> {
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                startActivity(intent)
+            }
+            is ActivityUIEffect.StartOverlayService -> {
+                startService(svc)
+            }
+            is ActivityUIEffect.StopOverlayService -> {
+                stopService(svc)
+            }
 
-    }
-
-
-
-
-    private fun test() {
-        if (!Settings.canDrawOverlays(this)) {
-            val intent =
-                Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
-            //startActivityForResult(intent, 12345)
-            startActivity(intent)
         }
-        val sh = this.getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
-        Log.e("Tag", "onCreate: ${sh.getString("MyString", "ssqaeq")}")
-        Log.e("Tag", "PACKAGE CHANGED: ${sh.getString("PACKAGE CHANGED", "")}")
-        Log.e("Tag", "PACKAGE ADDED: ${sh.getString("PACKAGE ADDED", "")}")
-
     }
+
+//    private val registerForActivityResult =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
+//            //ViewModel de kontrol ettiğim için burada kontrol etmeme gerek yok burada ki kodun amacı
+//            //Accessibility izin verdikten sonra otomatik olarak başladığı için bilgileri güncellemek
+//            için kullanıyorum
+//        }
 }
