@@ -4,4 +4,8 @@
     <string name="stop_service">Stop Service</string>
     <string name="app_package_name">App Name: %s</string>
     <string name="error_overlay_service">The app does not work properly because "Display over other apps" turned off</string>
+    <string name="day">Day: %d</string>
+    <string name="hour">Hour: %d</string>
+    <string name="second">Second: %d</string>
+    <string name="minutes">Second: %d</string>
 </resources>

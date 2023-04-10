@@ -59,6 +59,10 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
                 startActivity(intent)
             }
+            is ActivityUIEffect.ActionUsageAccessSettings -> {
+                val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                startActivity(intent)
+            }
             is ActivityUIEffect.ActionAccessibilityService -> {
                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                 startActivity(intent)
@@ -76,8 +80,5 @@ class MainActivity : AppCompatActivity() {
 //    private val registerForActivityResult =
 //        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 //            viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
-//            //ViewModel de kontrol ettiğim için burada kontrol etmeme gerek yok burada ki kodun amacı
-//            //Accessibility izin verdikten sonra otomatik olarak başladığı için bilgileri güncellemek
-//            için kullanıyorum
 //        }
 }

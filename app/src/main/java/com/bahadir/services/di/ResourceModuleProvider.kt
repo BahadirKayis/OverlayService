@@ -1,7 +1,8 @@
 package com.bahadir.services.di
 
 import android.content.Context
-import com.bahadir.services.data.usage.UsageStateManagerImpl
+import com.bahadir.services.data.source.UsageStateDataSourceImpl
+import com.bahadir.services.domain.source.UsageStateDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +15,6 @@ import javax.inject.Singleton
 object ResourceModuleProvider {
     @Provides
     @Singleton
-    fun provideResourceProvider(@ApplicationContext context: Context) = UsageStateManagerImpl(context)
+    fun provideResourceProvider(@ApplicationContext context: Context): UsageStateDataSource =
+        UsageStateDataSourceImpl(context)
 }

@@ -1,12 +1,15 @@
 package com.bahadir.services.ui.activity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bahadir.myanimehero.delegation.viewmodel.VMDelegation
 import com.bahadir.myanimehero.delegation.viewmodel.VMDelegationImpl
+import com.bahadir.services.common.Resource
 import com.bahadir.services.common.collectIn
 import com.bahadir.services.domain.provider.PermissionProvider
 import com.bahadir.services.domain.usecase.GetServiceUseCase
+import com.bahadir.services.domain.usecase.GetUsageStateUseCase
 import com.bahadir.services.domain.usecase.SetServiceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +21,8 @@ import javax.inject.Inject
 class ActivityVM @Inject constructor(
     private val getServiceStatusUC: GetServiceUseCase,
     private val setServiceStatusUseCase: SetServiceUseCase,
-    private val permission: PermissionProvider
+    private val permission: PermissionProvider,
+    private val usageState: GetUsageStateUseCase
 ) : ViewModel(),
     VMDelegation<ActivityUIEffect, ActivityUIEvent, ActivityUIState> by VMDelegationImpl(
         ActivityUIState.LoadingState()
@@ -33,6 +37,7 @@ class ActivityVM @Inject constructor(
                     if (event.status) checkPermission()
                     else {
                         setEffect(ActivityUIEffect.StopOverlayService)
+                        getUsageState()
                         setServiceStatus(event.status)
                     }
                 }
@@ -42,15 +47,19 @@ class ActivityVM @Inject constructor(
     }
 
     private fun checkPermission() {
-        if (permission.checkDrawOverlay()) {
-            if (permission.checkAccessibilityService()) {
-                setEffect(ActivityUIEffect.StartOverlayService)
-                setServiceStatus(true)
+        if (permission.checkUsageStats()) {
+            if (permission.checkDrawOverlay()) {
+                if (permission.checkAccessibilityService()) {
+                    setEffect(ActivityUIEffect.StartOverlayService)
+                    setServiceStatus(true)
+                } else {
+                    setEffect(ActivityUIEffect.ActionAccessibilityService)
+                }
             } else {
-                setEffect(ActivityUIEffect.ActionAccessibilityService)
+                setEffect(ActivityUIEffect.ActionDrawOtherApp)
             }
         } else {
-            setEffect(ActivityUIEffect.ActionDrawOtherApp)
+            setEffect(ActivityUIEffect.ActionUsageAccessSettings)
         }
     }
 
@@ -65,4 +74,16 @@ class ActivityVM @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    private fun getUsageState() {
+        usageState().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Log.i("ActivityVM", "getUsageState: ${result.data}")
+                }
+                is Resource.Error -> {
+                    Log.e("ActivityVM", "getUsageState: ${result.message}")
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 }
