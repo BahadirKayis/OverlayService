@@ -36,17 +36,17 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".broadcast.BootBroadcastReceiver"
+            android:name="com.bahadir.broadcastreceiver.BootBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".service.OverlayService"
+        <service android:name="com.bahadir.service.OverlayService"
             />
         <service
-            android:name=".accessibilty.OverlayAccessibilityService"
+            android:name="com.bahadir.accessibilityservice.OverlayAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:label="@string/app_name"
           android:exported="true">

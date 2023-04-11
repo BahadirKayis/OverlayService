@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace 'com.bahadir.services'
+    namespace 'com.bahadir.overlayservice'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.bahadir.services"
+        applicationId "com.bahadir.overlayservice"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -41,6 +41,9 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':core')
+    implementation project(path: ':broadcastreceiver')
+    implementation project(path: ':accessibilityservice')
 
     implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -49,7 +52,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.6'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.1'
     implementation 'androidx.test.espresso:espresso-accessibility:3.5.1'
+    implementation project(path: ':service')
     testImplementation 'junit:junit:4.13.2'
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
@@ -70,6 +75,13 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
 
-    //DataStore
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+
+
+    //Test
+    testImplementation "com.google.dagger:hilt-android-testing:2.44.2"
+    kaptTest "com.google.dagger:hilt-android-compiler:2.44.2"
+    testImplementation "org.mockito:mockito-core:3.12.4"
+    testImplementation "com.google.truth:truth:1.1.3"
+    testImplementation "org.robolectric:robolectric:4.3.1"
 }

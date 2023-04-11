@@ -12,5 +12,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Services"
+rootProject.name = "OverlayService"
 include ':app'
+include ':service'
+include ':accessibilityservice'
+include ':core'
+include ':broadcastreceiver'
