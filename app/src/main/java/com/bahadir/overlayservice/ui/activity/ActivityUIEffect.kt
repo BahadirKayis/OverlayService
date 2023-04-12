@@ -8,4 +8,5 @@ sealed class ActivityUIEffect : Effect {
     object ActionAccessibilityService : ActivityUIEffect()
     object StartOverlayService : ActivityUIEffect()
     object StopOverlayService : ActivityUIEffect()
+    data class ShowError(val message: String) : ActivityUIEffect()
 }

@@ -2,6 +2,10 @@ package com.bahadir.core.data.source
 
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.os.Build
 import com.bahadir.core.domain.mapper.mapToUsageStateUI
 import com.bahadir.core.domain.model.UsageStateUI
 import com.bahadir.core.domain.source.UsageStateDataSource
@@ -18,8 +22,42 @@ class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSou
         val data = usageStatsManager.queryUsageStats(
             UsageStatsManager.INTERVAL_BEST, startTime, calendarEnd
         )
-        return data.filter { usageStats ->
-            usageStats.totalTimeInForeground > 0 && usageStats.firstTimeStamp in startTime..calendarEnd
-        }.mapToUsageStateUI(context)
+
+        val usageState = data.filter { usageStats ->
+            usageStats.totalTimeInForeground > 0 && usageStats.lastTimeStamp in startTime..calendarEnd
+        }.mapToUsageStateUI()
+
+        return getInstalledApps(usageState)
     }
+
+    override fun isSystemApp(pkgInfo: PackageInfo): Boolean {
+        return pkgInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+    }
+
+    override fun getInstalledApps(usageState: MutableList<UsageStateUI>): List<UsageStateUI> {
+
+        val packs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.getInstalledPackages(
+                PackageManager.PackageInfoFlags.of(PackageManager.GET_META_DATA.toLong())
+            )
+        } else {
+            context.packageManager.getInstalledPackages(
+                PackageManager.GET_META_DATA
+            )
+        }
+        packs.forEach { p ->
+            val appName =
+                p.applicationInfo.loadLabel(context.packageManager).toString()
+            val icon = p.applicationInfo.loadIcon(context.packageManager)
+            val packages = p.applicationInfo.packageName
+
+            usageState.find { it.appPackageName == packages }?.let {
+                it.appName = appName
+                it.icon = icon
+            }
+        }
+
+        return usageState
+    }
+
 }

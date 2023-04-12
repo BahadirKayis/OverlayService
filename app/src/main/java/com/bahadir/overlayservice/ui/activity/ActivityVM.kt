@@ -1,17 +1,15 @@
 package com.bahadir.overlayservice.ui.activity
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bahadir.core.delegation.viewmodel.VMDelegation
-import com.bahadir.core.delegation.viewmodel.VMDelegationImpl
 import com.bahadir.core.common.Resource
 import com.bahadir.core.common.collectIn
+import com.bahadir.core.delegation.viewmodel.VMDelegation
+import com.bahadir.core.delegation.viewmodel.VMDelegationImpl
 import com.bahadir.core.domain.provider.PermissionProvider
 import com.bahadir.core.domain.usecase.GetServiceUseCase
 import com.bahadir.core.domain.usecase.GetUsageStateUseCase
 import com.bahadir.core.domain.usecase.SetServiceUseCase
-
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -37,9 +35,12 @@ class ActivityVM @Inject constructor(
                     // kullanıcı ayarları gidip kapatmış olabilir
                     if (event.status) checkPermission()
                     else {
+
                         setEffect(ActivityUIEffect.StopOverlayService)
-                        getUsageState()
                         setServiceStatus(event.status)
+                        getUsageState()
+
+
                     }
                 }
             }
@@ -69,20 +70,20 @@ class ActivityVM @Inject constructor(
         getServiceStatus()
     }
 
-    private fun getServiceStatus() {
-        getServiceStatusUC.invoke().onEach { result ->
-            setState(ActivityUIState.ServiceStatus(result))
-        }.launchIn(viewModelScope)
+    private fun getServiceStatus() = viewModelScope.launch {
+        val result = getServiceStatusUC.invoke()
+        setState(ActivityUIState.ServiceStatus(result))
+
     }
 
     private fun getUsageState() {
         usageState().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    Log.i("ActivityVM", "getUsageState: ${result.data}")
+                    setState(ActivityUIState.AppUsageTime(result.data))
                 }
                 is Resource.Error -> {
-                    Log.e("ActivityVM", "getUsageState: ${result.message}")
+                    setEffect(ActivityUIEffect.ShowError(result.message))
                 }
             }
         }.launchIn(viewModelScope)

@@ -3,7 +3,6 @@ package com.bahadir.core.di
 import android.content.Context
 import com.bahadir.core.data.source.UsageStateDataSourceImpl
 import com.bahadir.core.domain.source.UsageStateDataSource
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

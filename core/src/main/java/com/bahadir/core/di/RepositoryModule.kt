@@ -4,7 +4,6 @@ import com.bahadir.core.data.repository.RepositoryImpl
 import com.bahadir.core.domain.repository.Repository
 import com.bahadir.core.domain.source.DataStoreDataSource
 import com.bahadir.core.domain.source.UsageStateDataSource
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

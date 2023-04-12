@@ -1,6 +1,5 @@
 package com.bahadir.core.data.repository
 
-import android.util.Log
 import com.bahadir.core.common.Resource
 import com.bahadir.core.domain.model.UsageStateUI
 import com.bahadir.core.domain.repository.Repository
@@ -18,11 +17,7 @@ class RepositoryImpl(
         dataStore.setServiceStatus(status)
     }
 
-    override fun getServiceStatus(): Flow<Boolean> = callbackFlow {
-        val status = dataStore.getServiceStatus()
-        trySend(status)
-        awaitClose { channel.close() }
-    }
+    override suspend fun getServiceStatus(): Boolean  = dataStore.getServiceStatus()
 
 
     override suspend fun setServiceStartTime(startTime: Long) {
@@ -31,15 +26,9 @@ class RepositoryImpl(
 
     override fun getUsageStatesTime(): Flow<Resource<List<UsageStateUI>>> = callbackFlow {
         val startTime = dataStore.getServiceStartTime()
-        try {
-            Log.e("OverlayService", "getUsageStatesTime: $startTime")
-            val data = usageState.getUsageStatesTime(startTime)
-            Log.e("OverlayService", "DAAA: $data")
-            trySend(Resource.Success(data))
 
-        } catch (e: Exception) {
-            trySend(Resource.Error(e.message.toString()))
-        }
+            val data = usageState.getUsageStatesTime(startTime)
+            trySend(Resource.Success(data))
 
         awaitClose { channel.close() }
     }

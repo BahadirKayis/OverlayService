@@ -25,6 +25,7 @@ class OverlayService : Service() {
     @Inject
     @Named("default")
     lateinit var coroutineDefault: CoroutineScope
+
     @Inject
     lateinit var repo: Repository
 
@@ -40,7 +41,7 @@ class OverlayService : Service() {
     // Arasında ki iletişimi sağlamak içn de bunu kullanıyorum
     private val packageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val packageName = intent.getStringExtra("package_name")
+            val packageName = intent.getStringExtra(PACKAGE_NAME)
             updateOverlayText(packageName.toString())
         }
     }
@@ -48,7 +49,7 @@ class OverlayService : Service() {
     override fun onCreate() {
         super.onCreate()
         val filter = IntentFilter()
-        filter.addAction("overlay_package")
+        filter.addAction(ACTION)
         registerReceiver(packageReceiver, filter)
 
         createOverlay()
@@ -90,5 +91,8 @@ class OverlayService : Service() {
     companion object {
         const val LAYOUT_WIDTH = 500
         const val LAYOUT_HEIGHT = 300
+        const val CLASS_NAME = "android.intent.action.MAIN"
+        const val ACTION = "overlay_package"
+        const val PACKAGE_NAME = "package_name"
     }
 }

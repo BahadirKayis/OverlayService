@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Services</string>
+    <string name="app_name">Overlay Service</string>
     <string name="start_service">Start Service</string>
     <string name="stop_service">Stop Service</string>
+    <string name="accessibility_service_description">You need to grant this permission for the application to function correctly.</string>
+    <string name="app_icon">App Icon</string>
 </resources>

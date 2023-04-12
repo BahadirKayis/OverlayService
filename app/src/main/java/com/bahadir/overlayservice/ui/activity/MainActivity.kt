@@ -3,15 +3,16 @@ package com.bahadir.overlayservice.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.bahadir.overlayservice.R
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.bahadir.core.common.collectIn
+import com.bahadir.core.common.showCustomSnackBar
 import com.bahadir.core.common.viewBinding
+import com.bahadir.core.common.visible
+import com.bahadir.overlayservice.R
 import com.bahadir.overlayservice.databinding.ActivityMainBinding
 import com.bahadir.service.OverlayService
-
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var serviceStatus: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         setContentView(binding.root)
         initUIEffect()
         initUIEvent()
@@ -51,6 +53,10 @@ class MainActivity : AppCompatActivity() {
 
                 serviceStatus = state.serviceStatus
             }
+            is ActivityUIState.AppUsageTime -> {
+                binding.rcAppTime.visible()
+                binding.rcAppTime.adapter = AppsUsageTimeAdapter(state.appUsageTime)
+            }
             else -> {}
         }
     }
@@ -75,14 +81,16 @@ class MainActivity : AppCompatActivity() {
             }
             is ActivityUIEffect.StopOverlayService -> {
                 stopService(svc)
-            }
 
+            }
+            is ActivityUIEffect.ShowError -> {
+                binding.root.showCustomSnackBar(effect.message)
+            }
         }
     }
 
-    private val registerForActivityResult =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ ->
-
-         //   viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
-        }
+//    private val registerForActivityResult =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
+//            //   viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
+//        }
 }

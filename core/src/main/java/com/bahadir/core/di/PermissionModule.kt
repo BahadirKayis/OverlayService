@@ -1,9 +1,8 @@
 package com.bahadir.core.di
 
 import android.content.Context
-import com.bahadir.core.infrastructure.PermissionProviderImpl
 import com.bahadir.core.domain.provider.PermissionProvider
-import dagger.Binds
+import com.bahadir.core.infrastructure.PermissionProviderImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
