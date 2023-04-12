@@ -5,12 +5,13 @@ import android.content.Context
 import android.content.Intent
 import com.bahadir.core.domain.repository.Repository
 import com.bahadir.service.OverlayService
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class BootBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var repo: Repository

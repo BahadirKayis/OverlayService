@@ -11,24 +11,11 @@ import android.os.IBinder
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
-import com.bahadir.core.domain.repository.Repository
+import android.view.WindowManager.LayoutParams
 import com.bahadir.service.databinding.OtherAppDesignBinding
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
-import javax.inject.Named
 
-@AndroidEntryPoint
+
 class OverlayService : Service() {
-    @Inject
-    @Named("default")
-    lateinit var coroutineDefault: CoroutineScope
-
-    @Inject
-    lateinit var repo: Repository
-
     private lateinit var windowManager: WindowManager
     private lateinit var binding: OtherAppDesignBinding
 
@@ -51,26 +38,22 @@ class OverlayService : Service() {
         val filter = IntentFilter()
         filter.addAction(ACTION)
         registerReceiver(packageReceiver, filter)
-
         createOverlay()
-        coroutineDefault.launch {
-            repo.setServiceStartTime(Calendar.getInstance().timeInMillis)
-        }
     }
 
     private fun createOverlay() {
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         binding = OtherAppDesignBinding.inflate(LayoutInflater.from(this))
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
-            WindowManager.LayoutParams.TYPE_PHONE
+            LayoutParams.TYPE_PHONE
         }
-        val layoutParams = WindowManager.LayoutParams(
-            LAYOUT_WIDTH,
+        val layoutParams = LayoutParams(
+            LayoutParams.WRAP_CONTENT,
             LAYOUT_HEIGHT,
             layoutType,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
 
@@ -89,10 +72,9 @@ class OverlayService : Service() {
     }
 
     companion object {
-        const val LAYOUT_WIDTH = 500
-        const val LAYOUT_HEIGHT = 300
-        const val CLASS_NAME = "android.intent.action.MAIN"
+        const val LAYOUT_HEIGHT = 200
         const val ACTION = "overlay_package"
         const val PACKAGE_NAME = "package_name"
     }
+
 }

@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_package_name">App Name: %s</string>
+    <string name="app_package_name">App Package Name: %s</string>
     <string name="error_overlay_service">The app does not work properly because "Display over other apps" turned off</string>
 </resources>

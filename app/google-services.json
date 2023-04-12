@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "879360315444",
+    "project_id": "case-69133",
+    "storage_bucket": "case-69133.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:879360315444:android:3aaa03df9d39bbfccb7a61",
+        "android_client_info": {
+          "package_name": "com.bahadir.overlayservice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "879360315444-8d3ks472gdt2ov8cfr9ok1030nq43rc8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3uPrfYTn-kFE6qQOThC__FlOZZ6-C5sI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "879360315444-8d3ks472gdt2ov8cfr9ok1030nq43rc8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

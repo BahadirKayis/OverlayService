@@ -35,7 +35,6 @@ class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSou
     }
 
     override fun getInstalledApps(usageState: MutableList<UsageStateUI>): List<UsageStateUI> {
-
         val packs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.packageManager.getInstalledPackages(
                 PackageManager.PackageInfoFlags.of(PackageManager.GET_META_DATA.toLong())
@@ -57,7 +56,7 @@ class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSou
             }
         }
 
-        return usageState
+        return usageState.sortedByDescending { it.usageTime }
     }
 
 }

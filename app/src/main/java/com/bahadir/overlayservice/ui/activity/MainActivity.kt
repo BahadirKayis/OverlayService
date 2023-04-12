@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         initUIEvent()
         initUIState()
     }
-
     private fun initUIEvent() {
         binding.btnServiceControl.setOnClickListener {
             when (serviceStatus) {
@@ -39,11 +38,9 @@ class MainActivity : AppCompatActivity() {
                     binding.btnServiceControl.setText(R.string.start_service)
                 }
             }
-
             viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
         }
     }
-
     private fun initUIState() = viewModel.state.collectIn(this) { state ->
         when (state) {
             is ActivityUIState.ServiceStatus -> {
@@ -60,7 +57,6 @@ class MainActivity : AppCompatActivity() {
             else -> {}
         }
     }
-
     private fun initUIEffect() = viewModel.effect.collectIn(this) { effect ->
         val svc = Intent(this, OverlayService::class.java)
         when (effect) {
@@ -81,7 +77,6 @@ class MainActivity : AppCompatActivity() {
             }
             is ActivityUIEffect.StopOverlayService -> {
                 stopService(svc)
-
             }
             is ActivityUIEffect.ShowError -> {
                 binding.root.showCustomSnackBar(effect.message)
@@ -91,6 +86,6 @@ class MainActivity : AppCompatActivity() {
 
 //    private val registerForActivityResult =
 //        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { _ ->
-//            //   viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
+//
 //        }
 }

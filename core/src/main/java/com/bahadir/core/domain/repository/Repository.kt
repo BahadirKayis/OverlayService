@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface Repository {
     suspend fun setServiceStatus(status: Boolean)
-    suspend  fun getServiceStatus(): Boolean
+    suspend fun getServiceStatus(): Boolean
     suspend fun setServiceStartTime(startTime: Long)
     fun getUsageStatesTime(): Flow<Resource<List<UsageStateUI>>>
 }

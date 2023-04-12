@@ -8,7 +8,9 @@ import com.bahadir.core.domain.source.UsageStateDataSource
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import javax.inject.Singleton
 
+@Singleton
 class RepositoryImpl(
     private val dataStore: DataStoreDataSource,
     private val usageState: UsageStateDataSource
@@ -17,7 +19,7 @@ class RepositoryImpl(
         dataStore.setServiceStatus(status)
     }
 
-    override suspend fun getServiceStatus(): Boolean  = dataStore.getServiceStatus()
+    override suspend fun getServiceStatus(): Boolean = dataStore.getServiceStatus()
 
 
     override suspend fun setServiceStartTime(startTime: Long) {
@@ -27,9 +29,10 @@ class RepositoryImpl(
     override fun getUsageStatesTime(): Flow<Resource<List<UsageStateUI>>> = callbackFlow {
         val startTime = dataStore.getServiceStartTime()
 
-            val data = usageState.getUsageStatesTime(startTime)
-            trySend(Resource.Success(data))
+        val data = usageState.getUsageStatesTime(startTime)
+        trySend(Resource.Success(data))
 
         awaitClose { channel.close() }
     }
+
 }

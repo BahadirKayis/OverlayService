@@ -13,6 +13,7 @@ object Coroutines {
 object Hilt {
     const val android = "com.google.dagger:hilt-android:2.45"
     const val compiler = "com.google.dagger:hilt-compiler:2.44.2"
+    const val androidCompiler = "com.google.dagger:hilt-android-compiler:2.44"
 }
 
 object Firebase {

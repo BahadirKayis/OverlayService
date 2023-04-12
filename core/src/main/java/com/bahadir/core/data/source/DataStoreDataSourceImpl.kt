@@ -7,8 +7,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.bahadir.core.common.Constants.SERVICE_START_TIME
-import com.bahadir.core.common.Constants.SERVICE_STATUS
 import com.bahadir.core.domain.source.DataStoreDataSource
 import kotlinx.coroutines.flow.first
 
@@ -32,6 +30,11 @@ class DataStoreDataSourceImpl(private val context: Context) : DataStoreDataSourc
         context.datastore.edit {
             it[longPreferencesKey(SERVICE_START_TIME)] = startTime
         }
+    }
+
+    companion object {
+        const val SERVICE_STATUS = "service_status"
+        const val SERVICE_START_TIME = "service_start_time"
     }
 
 }

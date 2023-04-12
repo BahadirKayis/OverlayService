@@ -34,9 +34,8 @@ fun Long.timeSinceDate(context: Context): String {
 
 fun View.visible() {
     this.visibility = View.VISIBLE
-}fun View.gone() {
-    this.visibility = View.GONE
 }
+
 
 fun Long.convertMinute(): Int {
     val startTime = (Calendar.getInstance().timeInMillis - this) / 1000
@@ -62,6 +61,7 @@ fun View.showCustomSnackBar(message: String) {
         show()
     }
 }
+
 fun Resources.color(@ColorRes color: Int): Int {
     return ResourcesCompat.getColor(this, color, null)
 }

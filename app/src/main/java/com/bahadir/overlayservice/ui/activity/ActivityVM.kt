@@ -10,16 +10,19 @@ import com.bahadir.core.domain.provider.PermissionProvider
 import com.bahadir.core.domain.usecase.GetServiceUseCase
 import com.bahadir.core.domain.usecase.GetUsageStateUseCase
 import com.bahadir.core.domain.usecase.SetServiceUseCase
+import com.bahadir.core.domain.usecase.SetStartTimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityVM @Inject constructor(
     private val getServiceStatusUC: GetServiceUseCase,
     private val setServiceStatusUseCase: SetServiceUseCase,
+    private val setStartTimeUseCase: SetStartTimeUseCase,
     private val permission: PermissionProvider,
     private val usageState: GetUsageStateUseCase
 ) : ViewModel(),
@@ -35,12 +38,9 @@ class ActivityVM @Inject constructor(
                     // kullanıcı ayarları gidip kapatmış olabilir
                     if (event.status) checkPermission()
                     else {
-
                         setEffect(ActivityUIEffect.StopOverlayService)
                         setServiceStatus(event.status)
                         getUsageState()
-
-
                     }
                 }
             }
@@ -54,6 +54,7 @@ class ActivityVM @Inject constructor(
                 if (permission.checkAccessibilityService()) {
                     setEffect(ActivityUIEffect.StartOverlayService)
                     setServiceStatus(true)
+                    setStartTime()
                 } else {
                     setEffect(ActivityUIEffect.ActionAccessibilityService)
                 }
@@ -75,7 +76,6 @@ class ActivityVM @Inject constructor(
         setState(ActivityUIState.ServiceStatus(result))
 
     }
-
     private fun getUsageState() {
         usageState().onEach { result ->
             when (result) {
@@ -87,5 +87,11 @@ class ActivityVM @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun setStartTime() = viewModelScope.launch {
+        val startTime = Calendar.getInstance().timeInMillis
+        setStartTimeUseCase(startTime)
+
     }
 }

@@ -9,7 +9,7 @@ import android.view.accessibility.AccessibilityEvent
 class OverlayAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
-        //Servis bilgilerini yazdığımız yer XML de yazdığım için bırada yazmaya gerek yok
+        //Servis bilgilerini yazdığımız yer
         //Servis bağalndığında event type ekran değişince çalışacak şekilde ayarladım
         val info = AccessibilityServiceInfo()
         info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
