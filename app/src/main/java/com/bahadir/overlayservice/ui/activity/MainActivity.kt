@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.bahadir.core.common.collectIn
 import com.bahadir.core.common.showCustomSnackBar
-import com.bahadir.core.common.viewBinding
 import com.bahadir.core.common.visible
+import com.bahadir.core.delegation.viewBinding
 import com.bahadir.overlayservice.R
 import com.bahadir.overlayservice.databinding.ActivityMainBinding
 import com.bahadir.service.OverlayService
