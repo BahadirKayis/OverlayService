@@ -10,7 +10,5 @@ fun List<UsageStats>.mapToUsageStateUI() = map {
         usageTime = it.totalTimeInForeground.convertMinute(),
         appName = null,
         icon = null
-
-
     )
 }.toMutableList()

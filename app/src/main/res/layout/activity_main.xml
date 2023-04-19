@@ -29,6 +29,7 @@
         android:backgroundTint="@color/red"
         android:padding="@dimen/_8dp"
         android:text="@string/start_service"
+        android:textColor="@color/white"
         android:textSize="17sp"
         app:cornerRadius="@dimen/_16dp"
         app:layout_constraintBottom_toBottomOf="parent"

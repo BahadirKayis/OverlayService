@@ -11,7 +11,7 @@ import com.bahadir.core.domain.source.DataStoreDataSource
 import kotlinx.coroutines.flow.first
 
 class DataStoreDataSourceImpl(private val context: Context) : DataStoreDataSource {
-    private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "com.bahadir.services")
+    private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "com.bahadir.overlay")
     override suspend fun getServiceStatus(): Boolean {
         return context.datastore.data.first()[booleanPreferencesKey(SERVICE_STATUS)] ?: false
     }

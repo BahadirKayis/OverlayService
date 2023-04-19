@@ -43,7 +43,6 @@ android {
 dependencies {
     implementation project(path: ':core')
     implementation project(path: ':broadcastreceiver')
-    implementation project(path: ':accessibilityservice')
     implementation project(path: ':service')
 
     implementation 'androidx.core:core-ktx:1.10.0'

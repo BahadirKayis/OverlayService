@@ -23,7 +23,6 @@
         android:fontFamily="@font/archivo_black"
         android:textColor="@color/black_text"
         android:textSize="16sp"
-
         app:layout_constraintBottom_toBottomOf="@id/img_app"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/img_app"

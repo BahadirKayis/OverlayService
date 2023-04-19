@@ -24,23 +24,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         setContentView(binding.root)
+
         initUIEffect()
         initUIEvent()
         initUIState()
     }
+
     private fun initUIEvent() {
         binding.btnServiceControl.setOnClickListener {
-            when (serviceStatus) {
-                true -> {
-                    binding.btnServiceControl.setText(R.string.stop_service)
-                }
-                false -> {
-                    binding.btnServiceControl.setText(R.string.start_service)
-                }
-            }
             viewModel.setEvent(ActivityUIEvent.ServiceStatusChanged(!serviceStatus))
         }
     }
+
     private fun initUIState() = viewModel.state.collectIn(this) { state ->
         when (state) {
             is ActivityUIState.ServiceStatus -> {
@@ -50,34 +45,37 @@ class MainActivity : AppCompatActivity() {
 
                 serviceStatus = state.serviceStatus
             }
+
             is ActivityUIState.AppUsageTime -> {
                 binding.rcAppTime.visible()
                 binding.rcAppTime.adapter = AppsUsageTimeAdapter(state.appUsageTime)
             }
+
             else -> {}
         }
     }
+
     private fun initUIEffect() = viewModel.effect.collectIn(this) { effect ->
-        val svc = Intent(this, OverlayService::class.java)
+        val overlayService = Intent(this, OverlayService::class.java)
         when (effect) {
             is ActivityUIEffect.ActionDrawOtherApp -> {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
                 startActivity(intent)
             }
+
             is ActivityUIEffect.ActionUsageAccessSettings -> {
                 val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                 startActivity(intent)
             }
-            is ActivityUIEffect.ActionAccessibilityService -> {
-                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                startActivity(intent)
-            }
+
             is ActivityUIEffect.StartOverlayService -> {
-                startService(svc)
+                startService(overlayService)
             }
+
             is ActivityUIEffect.StopOverlayService -> {
-                stopService(svc)
+                stopService(overlayService)
             }
+
             is ActivityUIEffect.ShowError -> {
                 binding.root.showCustomSnackBar(effect.message)
             }

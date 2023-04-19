@@ -4,7 +4,7 @@ import com.bahadir.core.common.Resource
 import com.bahadir.core.domain.model.UsageStateUI
 import kotlinx.coroutines.flow.Flow
 
-interface Repository {
+interface OverlayServiceRepository {
     suspend fun setServiceStatus(status: Boolean)
     suspend fun getServiceStatus(): Boolean
     suspend fun setServiceStartTime(startTime: Long)

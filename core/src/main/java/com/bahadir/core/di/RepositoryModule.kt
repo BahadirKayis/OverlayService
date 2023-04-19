@@ -1,7 +1,7 @@
 package com.bahadir.core.di
 
-import com.bahadir.core.data.repository.RepositoryImpl
-import com.bahadir.core.domain.repository.Repository
+import com.bahadir.core.data.repository.OverlayServiceRepositoryImpl
+import com.bahadir.core.domain.repository.OverlayServiceRepository
 import com.bahadir.core.domain.source.DataStoreDataSource
 import com.bahadir.core.domain.source.UsageStateDataSource
 import dagger.Module
@@ -16,6 +16,6 @@ object RepositoryModule {
     fun provideRepository(
         dataSource: DataStoreDataSource,
         usageState: UsageStateDataSource
-    ): Repository =
-        RepositoryImpl(dataSource, usageState)
+    ): OverlayServiceRepository =
+        OverlayServiceRepositoryImpl(dataSource, usageState)
 }

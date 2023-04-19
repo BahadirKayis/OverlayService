@@ -1,10 +1,8 @@
 package com.bahadir.service
 
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -13,32 +11,24 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 import com.bahadir.service.databinding.OtherAppDesignBinding
+import com.bahadir.service.watcher.ForegroundAppWatcher
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class OverlayService : Service() {
+    @Inject
+    lateinit var foregroundAppWatcher: ForegroundAppWatcher
     private lateinit var windowManager: WindowManager
-    private lateinit var binding: OtherAppDesignBinding
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
-
-    //Diğer uygulamların paket ismini almak için AccessibilityService kullanıyorum
-    //Overlayı doğru bir şekilde yönetebilmek için de Service kullanıyorum
-    // Arasında ki iletişimi sağlamak içn de bunu kullanıyorum
-    private val packageReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val packageName = intent.getStringExtra(PACKAGE_NAME)
-            updateOverlayText(packageName.toString())
-        }
-    }
+    private var binding: OtherAppDesignBinding? = null
 
     override fun onCreate() {
         super.onCreate()
-        val filter = IntentFilter()
-        filter.addAction(ACTION)
-        registerReceiver(packageReceiver, filter)
         createOverlay()
+        updateOverlayText(packageName)
+        foregroundAppWatcher.startWatching {
+            updateOverlayText(it)
+        }
     }
 
     private fun createOverlay() {
@@ -58,23 +48,25 @@ class OverlayService : Service() {
         )
 
         layoutParams.gravity = Gravity.TOP or Gravity.CENTER
-        windowManager.addView(binding.root, layoutParams)
+        windowManager.addView(binding?.root, layoutParams)
+
     }
 
-    private fun updateOverlayText(text: String) {
-        binding.textAppName.text = this.getString(R.string.app_package_name, text)
+    private fun updateOverlayText(packageName: String) {
+        binding?.textAppName?.text = this.getString(R.string.package_name, packageName)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(packageReceiver)
-        windowManager.removeView(binding.root)
+        windowManager.removeView(binding?.root)
+        binding = null
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 
     companion object {
         const val LAYOUT_HEIGHT = 200
-        const val ACTION = "overlay_package"
-        const val PACKAGE_NAME = "package_name"
     }
-
 }

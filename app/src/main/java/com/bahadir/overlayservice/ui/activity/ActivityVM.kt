@@ -15,16 +15,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityVM @Inject constructor(
-    private val getServiceStatusUC: GetServiceUseCase,
+    private val getServiceStatusUseCase: GetServiceUseCase,
     private val setServiceStatusUseCase: SetServiceUseCase,
     private val setStartTimeUseCase: SetStartTimeUseCase,
     private val permission: PermissionProvider,
-    private val usageState: GetUsageStateUseCase
+    private val getUsageTimeUseCase: GetUsageStateUseCase
 ) : ViewModel(),
     VMDelegation<ActivityUIEffect, ActivityUIEvent, ActivityUIState> by VMDelegationImpl(
         ActivityUIState.LoadingState()
@@ -35,11 +35,11 @@ class ActivityVM @Inject constructor(
             when (event) {
                 is ActivityUIEvent.ServiceStatusChanged -> {
                     //her start service dediğinde izinleri tekrar kontrol ediyorum
-                    // kullanıcı ayarları gidip kapatmış olabilir
+                    // kullanıcı ayarlara gidip kapatmış olabilir
                     if (event.status) checkPermission()
                     else {
                         setEffect(ActivityUIEffect.StopOverlayService)
-                        setServiceStatus(event.status)
+                        setServiceStatus(false)
                         getUsageState()
                     }
                 }
@@ -51,13 +51,9 @@ class ActivityVM @Inject constructor(
     private fun checkPermission() {
         if (permission.checkUsageStats()) {
             if (permission.checkDrawOverlay()) {
-                if (permission.checkAccessibilityService()) {
-                    setEffect(ActivityUIEffect.StartOverlayService)
-                    setServiceStatus(true)
-                    setStartTime()
-                } else {
-                    setEffect(ActivityUIEffect.ActionAccessibilityService)
-                }
+                setEffect(ActivityUIEffect.StartOverlayService)
+                setServiceStatus(true)
+                setStartTime()
             } else {
                 setEffect(ActivityUIEffect.ActionDrawOtherApp)
             }
@@ -72,16 +68,17 @@ class ActivityVM @Inject constructor(
     }
 
     private fun getServiceStatus() = viewModelScope.launch {
-        val result = getServiceStatusUC.invoke()
+        val result = getServiceStatusUseCase.invoke()
         setState(ActivityUIState.ServiceStatus(result))
-
     }
+
     private fun getUsageState() {
-        usageState().onEach { result ->
+        getUsageTimeUseCase().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     setState(ActivityUIState.AppUsageTime(result.data))
                 }
+
                 is Resource.Error -> {
                     setEffect(ActivityUIEffect.ShowError(result.message))
                 }
@@ -92,6 +89,5 @@ class ActivityVM @Inject constructor(
     private fun setStartTime() = viewModelScope.launch {
         val startTime = Calendar.getInstance().timeInMillis
         setStartTimeUseCase(startTime)
-
     }
 }

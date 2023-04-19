@@ -2,14 +2,12 @@ package com.bahadir.core.data.source
 
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import com.bahadir.core.domain.mapper.mapToUsageStateUI
 import com.bahadir.core.domain.model.UsageStateUI
 import com.bahadir.core.domain.source.UsageStateDataSource
-import java.util.*
+import java.util.Calendar
 
 class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSource {
     override fun getUsageStatesTime(startTime: Long): List<UsageStateUI> {
@@ -30,11 +28,10 @@ class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSou
         return getInstalledApps(usageState)
     }
 
-    override fun isSystemApp(pkgInfo: PackageInfo): Boolean {
-        return pkgInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
-    }
 
-    override fun getInstalledApps(usageState: MutableList<UsageStateUI>): List<UsageStateUI> {
+    // sadece getUsageStatesTime içerisinde kullanılması gerektiği için interface eklemedim
+    //Böylelikle  daha okunaklı  ve anlaşılabilir bir hal alıyor
+    private fun getInstalledApps(usageState: MutableList<UsageStateUI>): List<UsageStateUI> {
         val packs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             context.packageManager.getInstalledPackages(
                 PackageManager.PackageInfoFlags.of(PackageManager.GET_META_DATA.toLong())
@@ -58,5 +55,6 @@ class UsageStateDataSourceImpl(private val context: Context) : UsageStateDataSou
 
         return usageState.sortedByDescending { it.usageTime }
     }
+
 
 }
